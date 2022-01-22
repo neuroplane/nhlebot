@@ -53,14 +53,14 @@ async def inline_echo(inline_query: InlineQuery):
         response = "Вот вам два бойца"
     input_content2 = InputTextMessageContent(response, parse_mode=types.ParseMode.MARKDOWN)
     result_id2: str = hashlib.md5(text.encode()).hexdigest()
-    item = InlineQueryResultArticle(id=hashgen(), title="Item1",
+    item1 = InlineQueryResultArticle(id=hashgen(), title="Item1",
                                      input_message_content=input_content2)
     item2 = InlineQueryResultArticle(id=hashgen(), title="Item2",
                                      input_message_content=input_content2)
-    item3 = InlineQueryResultArticle(id=hashgen(), title="item3 from list",
+    item3 = InlineQueryResultArticle(id=hashgen(), title="Item3",
                                      input_message_content=input_content2)
     # don't forget to set cache_time=1 for testing (default is 300s or 5m)
-    await bot.answer_inline_query(inline_query.id, results=[item, item2, item3], cache_time=1)
+    await bot.answer_inline_query(inline_query.id, results=[item1, item2, item3], cache_time=1)
 
 
 if __name__ == '__main__':

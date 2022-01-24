@@ -4,15 +4,16 @@ from random import random, randrange
 import requests
 import jmespath
 import datetime
+import explode
 from datetime import datetime as dt
 
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.types import InlineQuery, \
     InputTextMessageContent, InlineQueryResultArticle
 
-API_TOKEN = '2100506147:AAGI7UjsKpUcIkkvO36Ix5O0Z3DXEXSBgOk'
+API_TOKEN = '5184085257:AAHMcd122nOrN8oyKU_LEDpdqDeUtwfolVI'
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher(bot)
@@ -30,36 +31,34 @@ def get_player_stats(player):
     url = "https://api.nhle.com/stats/rest/en/skater/summary"
 
     querystring = {"isAggregate": "false", "isGame": "false",
-                   "sort": "[{\"property\":\"points\",\"direction\":\"DESC\"},{\"property\":\"goals\",\"direction\":\"DESC\"},{\"property\":\"assists\",\"direction\":\"DESC\"},{\"property\":\"playerId\",\"direction\":\"ASC\"}]",
                    "start": "0", "limit": "50", "factCayenneExp": "gamesPlayed>=1",
                    "cayenneExp": "gameTypeId=2 and seasonId<=20212022 and seasonId>=20212022 and skaterFullName likeIgnoreCase \"%"+str(player.message_text)+"%\""}
 
     payload = ""
     response = requests.request("GET", url, data=payload, params=querystring).json()
-
     return response
 
 @dp.inline_handler()
 async def inline_echo(inline_query: InlineQuery):
     response = ""
     text = inline_query.query or 'echo'
-    stats = get_player_stats(InputTextMessageContent(text))
-    jmes_stats = jmespath.search("data[0]", stats)
-    print(jmes_stats['skaterFullName'])
-    response =  '`' + jmes_stats['skaterFullName'] + "\n\n`"
-    for key, value in jmes_stats.items():
-        response =response + '`' + key + ": " + str(value) + "\n" + "`"
-    #print(statsarr)
+    response = "This is a response text"
+    print(inline_query.from_user.username + " " + inline_query.query)
+    statarray = getattr(InputTextMessageContent(text), "message_text").split(" ", 1)
+    # print(len(statarray))
+    if len(statarray) < 2:
+        # print("Недостаточно данных")
+        response = "Недостаточно данных"
+        articletitle = "Запрос вида @nhlelitebot player1 player2"
+    else:
+        response = explode.explode(statarray[0], statarray[1])
+        articletitle = "Сравнить"
     input_content2 = InputTextMessageContent(response, parse_mode=types.ParseMode.MARKDOWN)
     result_id2: str = hashlib.md5(text.encode()).hexdigest()
-    item = InlineQueryResultArticle(id=hashgen(), title=jmes_stats['lastName'],
-                                     input_message_content=input_content2)
-    item2 = InlineQueryResultArticle(id=hashgen(), title=jmes_stats['skaterFullName'],
-                                     input_message_content=input_content2)
-    item3 = InlineQueryResultArticle(id=hashgen(), title="item3 from list",
+    item1 = InlineQueryResultArticle(id=hashgen(), title=articletitle,
                                      input_message_content=input_content2)
     # don't forget to set cache_time=1 for testing (default is 300s or 5m)
-    await bot.answer_inline_query(inline_query.id, results=[item, item2, item3], cache_time=1)
+    await bot.answer_inline_query(inline_query.id, results=[item1], cache_time=1)
 
 
 if __name__ == '__main__':

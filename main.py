@@ -6,6 +6,7 @@ import jmespath
 import datetime
 import explode
 from datetime import datetime as dt
+import time
 
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.types import InlineQuery, \
@@ -27,19 +28,9 @@ def hashgen():
 def random_num(maxnum):
     return randrange(0, maxnum)
 
-def get_player_stats(player):
-    url = "https://api.nhle.com/stats/rest/en/skater/summary"
-
-    querystring = {"isAggregate": "false", "isGame": "false",
-                   "start": "0", "limit": "50", "factCayenneExp": "gamesPlayed>=1",
-                   "cayenneExp": "gameTypeId=2 and seasonId<=20212022 and seasonId>=20212022 and skaterFullName likeIgnoreCase \"%"+str(player.message_text)+"%\""}
-
-    payload = ""
-    response = requests.request("GET", url, data=payload, params=querystring).json()
-    return response
-
 @dp.inline_handler()
 async def inline_echo(inline_query: InlineQuery):
+
     response = ""
     text = inline_query.query or 'echo'
     response = "This is a response text"
@@ -54,7 +45,6 @@ async def inline_echo(inline_query: InlineQuery):
         response = explode.explode(statarray[0], statarray[1])
         articletitle = "Сравнить"
     input_content2 = InputTextMessageContent(response, parse_mode=types.ParseMode.MARKDOWN)
-    result_id2: str = hashlib.md5(text.encode()).hexdigest()
     item1 = InlineQueryResultArticle(id=hashgen(), title=articletitle,
                                      input_message_content=input_content2)
     # don't forget to set cache_time=1 for testing (default is 300s or 5m)

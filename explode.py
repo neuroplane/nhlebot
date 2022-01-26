@@ -5,6 +5,7 @@ import requests
 import jmespath
 import datetime
 from datetime import datetime as dt
+import time
 
 
 def getstats(player):
@@ -15,6 +16,7 @@ def getstats(player):
                    "cayenneExp": "gameTypeId=2 and seasonId<=20212022 and seasonId>=20212022 and skaterFullName likeIgnoreCase \"%"+str(player)+"%\""}
 
     payload = ""
+    time.sleep(1)
     response = requests.request("GET", url, data=payload, params=querystring).json()
     output = jmespath.search("data", response)[0]
     output_list = list(output.keys())

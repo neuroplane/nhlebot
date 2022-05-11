@@ -7,6 +7,7 @@ import datetime
 import explode
 from datetime import datetime as dt
 import time
+import random
 
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.types import InlineQuery, \
@@ -19,6 +20,11 @@ logging.basicConfig(level=logging.INFO)
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher(bot)
 statsarr = []
+quotesArray = ["Цитата дня:\n\n_Вы хоккей жопой смотрите?_\n\n@garikus89"]
+quotesArray1 = [{"quote":"Цитата дня:\n\n_Вы хоккей жопой смотрите?_", "author": "@garikus89"},
+                {"quote":"Цитата дня:\n\n_Вы хоккей жопой смотрите?_", "author": "@garikus89"}
+                ]
+print(random.choice(quotesArray1)["author"])
 
 
 def hashgen():
@@ -37,16 +43,11 @@ async def inline_echo(inline_query: InlineQuery):
     print(inline_query.from_user.username + " " + inline_query.query)
     statarray = getattr(InputTextMessageContent(text), "message_text").split(" ", 1)
     # print(len(statarray))
-    if len(statarray) < 2:
-        # print("Недостаточно данных")
-        response = "Недостаточно данных"
-        articletitle = "Запрос вида @nhlelitebot player1 player2"
-    else:
-        response = explode.explode(statarray[0], statarray[1])
-        articletitle = "Сравнить"
+    response = random.choice(quotesArray1)["quote"] + "\n" + random.choice(quotesArray1)["author"]
+    articletitle = "Цитата дня"
     input_content2 = InputTextMessageContent(response, parse_mode=types.ParseMode.MARKDOWN)
     item1 = InlineQueryResultArticle(id=hashgen(), title=articletitle,
-                                     input_message_content=input_content2)
+                                     input_message_content=input_content2, thumb_url="https://pacificadulthockey.com/wp-content/uploads/2018/10/Delta-Cup.png")
     # don't forget to set cache_time=1 for testing (default is 300s or 5m)
     await bot.answer_inline_query(inline_query.id, results=[item1], cache_time=1)
 

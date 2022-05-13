@@ -21,6 +21,7 @@ logging.basicConfig(level=logging.INFO)
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher(bot)
 
+apitypes = [{}]
 
 def hashgen():
     genhash = hashlib.md5(str(dt.now()).encode()).hexdigest()
@@ -34,11 +35,8 @@ def summary():
                    "sort": "[{\"property\":\"points\",\"direction\":\"DESC\"},{\"property\":\"goals\",\"direction\":\"DESC\"},{\"property\":\"assists\",\"direction\":\"DESC\"},{\"property\":\"playerId\",\"direction\":\"ASC\"}]",
                    "start": "0", "limit": "50", "factCayenneExp": "gamesPlayed>=1",
                    "cayenneExp": "gameTypeId=3 and seasonId<=20212022 and seasonId>=20212022"}
-
     headers = {"Content-Type": "application/json"}
-
     response = requests.request("GET", url, headers=headers, params=querystring)
-
     return response.json()["data"]
 
 
@@ -56,8 +54,7 @@ async def inline_echo(inline_query: InlineQuery):
                                      input_message_content=InputTextMessageContent(
                                          player["skaterFullName"]
                                          + " [" + player["teamAbbrevs"] + "]\nTOI: "
-                                         + str(player["timeOnIcePerGame"]//60) + "\nSHOTS: " + str(player["shots"]) + "\n+/-: " + str(player["plusMinus"]) + "\nPIM: " + str(player["penaltyMinutes"]),
-                                         parse_mode=types.ParseMode.MARKDOWN),
+                                         + str(player["timeOnIcePerGame"]//60) + "\nSHOTS: " + str(player["shots"]) + "\n+/-: " + str(player["plusMinus"]) + "\nPIM: " + str(player["penaltyMinutes"])),
                                      thumb_url="https://cms.nhl.bamgrid.com/images/headshots/current/168x168/" + str(player["playerId"]) + ".jpg")
         items.append(item)
     # don't forget to set cache_time=1 for testing (default is 300s or 5m)

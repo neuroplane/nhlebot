@@ -20,7 +20,7 @@ bot = Bot(token=API_TOKEN)
 dp = Dispatcher(bot)
 stats_array = []
 inline_objects = [
-    {"type": "pga", "title": "Field. PGA", "description": "Points, Goals, Assists", "keys": ["skaterFullName", "goals"], "url": 'https://api.nhle.com/stats/rest/en/skater/summary?isAggregate=false&isGame=false&sort=[{"property":"points","direction":"DESC"},{"property":"goals","direction":"DESC"},{"property":"assists","direction":"DESC"},{"property":"playerId","direction":"ASC"}]&start=0&limit=10&factCayenneExp=gamesPlayed>=1&cayenneExp=gameTypeId=3 and seasonId<=20212022 and seasonId>=20212022'}
+    {"type": "pga", "title": "Field. PGA", "description": "Points, Goals, Assists", "keys": ["skaterFullName", "points", "goals", "assists"], "url": 'https://api.nhle.com/stats/rest/en/skater/summary?isAggregate=false&isGame=false&sort=[{"property":"points","direction":"DESC"},{"property":"goals","direction":"DESC"},{"property":"assists","direction":"DESC"},{"property":"playerId","direction":"ASC"}]&start=0&limit=10&factCayenneExp=gamesPlayed>=1&cayenneExp=gameTypeId=3 and seasonId<=20212022 and seasonId>=20212022'}
     ]
 
 def hashgen():
@@ -35,12 +35,14 @@ def get_nhl_stats(url):
 
 
 def list_items(input_list, input_keys):
-    stats = ""
-    stats_line = ""
-    for stat in input_list:
-        for key in input_keys:
-            stats_line = stats_line + str(stat[key]) + "\n"
-        stats = stats + stats_line
+    stats = "" #текст целиком
+    stats_line = "" #строка со статой на каждого игрока
+    for stat in input_list: #получаем каждого игрока
+        for key in input_keys: #получаем нужную стату из keys
+            stats_line = str(stat[key])
+            stats = stats + stats_line + " "
+            stats_line = ""
+        stats = stats + "\n"
     print(stats)
     return str(stats)
 
